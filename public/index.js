@@ -14,9 +14,14 @@ const aspect = window.innerWidth / window.innerHeight;
 const near = 0.1;
 const far = 1000;
 
+//mouse move
+//controls = new THREE.TrackballControls( camera );
+//controls.target.set( 0, 0, 0 )
+
+
 //camera
 camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-camera.position.z = 4;
+camera.position.z = 6;
 camera.position.x = 0;
 scene.add(camera);
 
@@ -30,7 +35,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
 renderer.setClearColor(0x000000, 0.0);
 
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled = true ;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 //bloom renderer
@@ -52,10 +57,10 @@ bloomComposer.addPass(bloomPass);
 
 //sun object
 const color = new THREE.Color("#FDB813");
-const geometry = new THREE.IcosahedronGeometry(1, 15);
+const geometry = new THREE.IcosahedronGeometry(2, 15);
 const material = new THREE.MeshBasicMaterial({ color: color });
 const sphere = new THREE.Mesh(geometry, material);
-sphere.position.set(-50, 20, -60);
+sphere.position.set(-50, 10, -60);
 sphere.layers.set(1);
 scene.add(sphere);
 
@@ -109,7 +114,7 @@ earthMesh.layers.set(0);
 scene.add(cloud);
 
 //moon geometry
-const moongeometry = new THREE.SphereGeometry(0.1, 32, 32);
+const moongeometry = new THREE.SphereGeometry(0.4, 32, 32);
 
 //moon material
 const moonMaterial = new THREE.MeshPhongMaterial({
@@ -148,7 +153,7 @@ pointLight.shadowBias = 0.00001;
 pointLight.shadowDarkness = 0.2;
 pointLight.shadowMapWidth = 2048;
 pointLight.shadowMapHeight = 2048;
-pointLight.position.set(-50, 20, -60);
+pointLight.position.set(-50, 10, -60);
 scene.add(pointLight);
 
 //resize listner
