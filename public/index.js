@@ -50,7 +50,7 @@ const bloomPass = new UnrealBloomPass(
   0.85
 );
 bloomPass.threshold = 0;
-bloomPass.strength = 2; //intensity of glow
+bloomPass.strength = 1; //intensity of glow
 bloomPass.radius = 0;
 const bloomComposer = new EffectComposer(renderer);
 bloomComposer.setSize(window.innerWidth, window.innerHeight);
@@ -58,10 +58,17 @@ bloomComposer.renderToScreen = true;
 bloomComposer.addPass(renderScene);
 bloomComposer.addPass(bloomPass);
 
+
 //sun object
 const color = new THREE.Color("#FDB813");
 const geometry = new THREE.IcosahedronGeometry(2, 15);
-const material = new THREE.MeshBasicMaterial({ color: color });
+const material = new THREE.MeshBasicMaterial({ 
+  roughness: 3,
+  metalness: 0,
+  map: THREE.ImageUtils.loadTexture("texture/sun.jpg"),
+  bumpScale: 0.2,
+ });
+
 const sunMesh = new THREE.Mesh(geometry, material);
 sunMesh.position.set(-50, 0, 5);
 sunMesh.layers.set(1);
@@ -103,7 +110,7 @@ earthMesh.position.set(10, 0, 5);
 scene.add(earthMesh);
 
 //moon geometry
-const moongeometry = new THREE.SphereGeometry(0.4, 32, 32);
+const moongeometry = new THREE.SphereGeometry(0.5, 32, 32);
 
 //moon material
 const moonMaterial = new THREE.MeshPhongMaterial({
@@ -119,6 +126,7 @@ const moonMesh = new THREE.Mesh(moongeometry, moonMaterial);
 moonMesh.receiveShadow = true;
 moonMesh.castShadow = true;
 moonMesh.position.x = 2;
+
 moonMesh.layers.set(0);
 scene.add(moonMesh);
 
@@ -139,7 +147,7 @@ const ambientlight = new THREE.AmbientLight(0xffffff, 0.2);
 scene.add(ambientlight);
 
 //point Light
-const pointLight = new THREE.PointLight(0xffffff, 1);
+const pointLight = new THREE.PointLight(0xffffff, 5);
 pointLight.castShadow = true;
 pointLight.shadowCameraVisible = true;
 pointLight.shadowBias = 0.00001;
