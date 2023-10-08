@@ -5,16 +5,33 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rotation</title>
+    <title>Eclipse: Perspective is Everything</title>
     <link rel="stylesheet" href="./styles.css">
 </head>
 
 <body>
     <div>
-        <canvas class="webgl"></canvas>
+        <canvas class="webgl" id="eclipse-canvas"></canvas>
     </div>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.js"></script> -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+    <div id="solarEclipseAlert" class="alert" style="display: none;">
+        <span class="closeAlert">X</span>
+        <h3><span>Solar Eclipse</span></h3>
+        <p>A total solar eclipse happens when the Moon passes between the Sun and Earth, completely blocking the face of the Sun. People located in the center of the Moon’s shadow when it hits Earth will experience a total eclipse. The next total solar eclipse in the U.S. will be on <b><em> April 8, 2024</em></b>.</p>
+    </div>
+
+    <div id="lunarEclipseAlert" class="alert" style="display: none;">
+        <span class="closeAlert">X</span>
+        <h3><span>Lunar Eclipse</span></h3>
+        <p>A total solar eclipse happens when the Moon passes between the Sun and Earth, completely blocking the face of the Sun. People located in the center of the Moon’s shadow when it hits Earth will experience a total eclipse. The next total solar eclipse in the U.S. will be on <b><em> April 8, 2024</em></b>.</p>
+    </div>
+
+    <div id="buttonBox">
+        <button id="solarEclipseBtn" class="btnAction">Solar Eclipse</button>
+        <button id="lunarEclipseBtn" class="btnAction">Lunar Eclipse</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="module" src="./index.js"></script>
 </body>
 

@@ -4,24 +4,23 @@ import { RenderPass } from "/node_modules/three/examples/jsm/postprocessing/Rend
 import { UnrealBloomPass } from "/node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { OrbitControls } from "/node_modules/three/examples/jsm/controls/OrbitControls.js";
 
-//global declaration
+// Global declaration
 let scene;
 let camera;
 let renderer;
-const canvas = document.getElementsByTagName("canvas")[0];
-scene = new THREE.Scene();
 const fov = 60;
-const aspect = window.innerWidth / window.innerHeight;
 const near = 0.1;
 const far = 1000;
+scene = new THREE.Scene();
+const aspect = window.innerWidth / window.innerHeight;
+const canvas = document.getElementsByTagName("canvas")[0];
 
-//camera
+// Camera
 camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-camera.position.z = 7;
-camera.position.x = 6;
+camera.position.set(0, 0, 50);
 scene.add(camera);
 
-//default renderer
+// Default Renderer
 renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   antialias: true,
@@ -34,14 +33,17 @@ renderer.setClearColor(0x000000, 0.0);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+// OrbitControls
 const controls = new OrbitControls(camera, renderer.domElement);
-
-// Set some options for the controls (optional)
-controls.enableDamping = true;
+controls.enableDamping = false;
 controls.dampingFactor = 0.05;
 controls.rotateSpeed = 0.5;
+controls.minDistance = 10;
+controls.maxDistance = 100;
+controls.minPolarAngle = 0.1;
+controls.maxPolarAngle = Math.PI / 2 - 0.1;
 
-//bloom renderer
+// Bloom renderer
 const renderScene = new RenderPass(scene, camera);
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
@@ -49,43 +51,48 @@ const bloomPass = new UnrealBloomPass(
   0.4,
   0.85
 );
-bloomPass.threshold = 0;
-bloomPass.strength = 2; //intensity of glow
-bloomPass.radius = 0;
+bloomPass.strength = 1.0;
+bloomPass.radius = 0.5;
+bloomPass.threshold = 0.8;
 const bloomComposer = new EffectComposer(renderer);
 bloomComposer.setSize(window.innerWidth, window.innerHeight);
 bloomComposer.renderToScreen = true;
-bloomComposer.addPass(renderScene);
 bloomComposer.addPass(bloomPass);
+bloomComposer.addPass(renderScene);
 
-//sun object
-const color = new THREE.Color("#FDB813");
-const geometry = new THREE.IcosahedronGeometry(2, 15);
-const material = new THREE.MeshBasicMaterial({ color: color });
-const sunMesh = new THREE.Mesh(geometry, material);
+// Sun object
+const sunGeometry = new THREE.IcosahedronGeometry(8, 20);
+
+const sunMaterial = new THREE.MeshPhongMaterial({
+  roughness: 1,
+  metalness: 0,
+  map: THREE.ImageUtils.loadTexture("texture/sunmap.jpg"),
+  bumpMap: THREE.ImageUtils.loadTexture("texture/sunbump.jpeg"),
+});
+
+const sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
 sunMesh.position.set(-50, 0, 5);
-sunMesh.layers.set(1);
+sunMesh.layers.set(0);
+
 scene.add(sunMesh);
 
-// galaxy geometry
-const starGeometry = new THREE.SphereGeometry(80, 64, 64);
+// Galaxy
+const starGeometry = new THREE.SphereGeometry(150, 64, 64);
 
-// galaxy material
 const starMaterial = new THREE.MeshBasicMaterial({
-  map: THREE.ImageUtils.loadTexture("texture/galaxy.png"),
+  map: THREE.ImageUtils.loadTexture("texture/new-galaxy.jpg"),
   side: THREE.BackSide,
   transparent: true,
 });
 
-// galaxy mesh
 const starMesh = new THREE.Mesh(starGeometry, starMaterial);
-starMesh.layers.set(1);
+starMesh.layers.set(0);
+
 scene.add(starMesh);
 
-//earth geometry
-const earthgeometry = new THREE.SphereGeometry(0.98, 32, 32);
+// Earth
+const earthGeometry = new THREE.SphereGeometry(4, 32, 32);
 
-//earth material
 const earthMaterial = new THREE.MeshPhongMaterial({
   roughness: 1,
   metalness: 0,
@@ -94,18 +101,16 @@ const earthMaterial = new THREE.MeshPhongMaterial({
   bumpScale: 0.3,
 });
 
-//earthMesh
-const earthMesh = new THREE.Mesh(earthgeometry, earthMaterial);
+const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
 earthMesh.receiveShadow = true;
 earthMesh.castShadow = true;
 earthMesh.layers.set(0);
-earthMesh.position.set(10, 0, 5);
+earthMesh.position.set(40, 0, 5);
 scene.add(earthMesh);
 
-//moon geometry
-const moongeometry = new THREE.SphereGeometry(0.4, 32, 32);
+// Moon
+const moonGeometry = new THREE.SphereGeometry(2, 32, 32);
 
-//moon material
 const moonMaterial = new THREE.MeshPhongMaterial({
   roughness: 5,
   metalness: 0,
@@ -114,14 +119,16 @@ const moonMaterial = new THREE.MeshPhongMaterial({
   bumpScale: 0.02,
 });
 
-//moonMesh
-const moonMesh = new THREE.Mesh(moongeometry, moonMaterial);
+const moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
 moonMesh.receiveShadow = true;
 moonMesh.castShadow = true;
-moonMesh.position.x = 2;
+moonMesh.position.x = 10;
+// moonMesh.position.y = 0;
 moonMesh.layers.set(0);
+
 scene.add(moonMesh);
 
+//Pivot
 var moonPivot = new THREE.Object3D();
 earthMesh.add(moonPivot);
 moonPivot.add(moonMesh);
@@ -134,20 +141,76 @@ var earthPivot = new THREE.Object3D();
 sunMesh.add(earthPivot);
 earthPivot.add(earthMesh);
 
-//ambient light
-const ambientlight = new THREE.AmbientLight(0xffffff, 0.2);
-scene.add(ambientlight);
+// Ambient light
+const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+scene.add(ambientLight);
 
-//point Light
-const pointLight = new THREE.PointLight(0xffffff, 1);
+// Point Light
+const pointLight = new THREE.PointLight(0xffffff, 2);
 pointLight.castShadow = true;
-pointLight.shadowCameraVisible = true;
+pointLight.decay = 1;
+pointLight.shadow.mapSize.width = 2048;
+pointLight.shadow.mapSize.height = 2048;
+pointLight.shadow.camera.near = 1;
+pointLight.shadow.camera.far = 1000;
 pointLight.shadowBias = 0.00001;
-pointLight.shadowDarkness = 0.2;
-pointLight.shadowMapWidth = 2048;
-pointLight.shadowMapHeight = 2048;
-pointLight.position.set(-50, 0, 0);
+pointLight.shadowDarkness = 1;
+pointLight.position.set(-50, 0, 5);
 scene.add(pointLight);
+
+const moonOrbit = {
+  radius: 10,
+  speed: 0.005,
+  angle: 0,
+  destinationAngle: Math.PI,
+  isAnimating: false,
+};
+
+const updateMoonPosition = () => {
+  moonOrbit.angle += moonOrbit.speed;
+  const x = moonOrbit.radius * Math.cos(moonOrbit.angle);
+  const y = moonOrbit.radius * Math.sin(moonOrbit.angle);
+  moonMesh.position.set(x, y, 0);
+};
+
+const animateMoonToDestination = () => {
+  moonOrbit.angle += moonOrbit.speed;
+  if (moonOrbit.angle < moonOrbit.destinationAngle) {
+    updateMoonPosition();
+    requestAnimationFrame(animateMoonToDestination);
+  } else {
+    moonOrbit.isAnimating = false;
+  }
+};
+
+const animateSolarEclipse = () => {
+  if (!moonOrbit.isAnimating) {
+    moonOrbit.angle = 0;
+    moonOrbit.destinationAngle = Math.PI;
+    moonOrbit.isAnimating = true;
+    animateMoonToDestination();
+    $('#lunarEclipseAlert').fadeOut();
+    $('#solarEclipseAlert').fadeIn('slow');
+  }
+};
+
+document
+  .getElementById("solarEclipseBtn")
+  .addEventListener("click", animateSolarEclipse);
+
+const animateLunarEclipse = () => {
+  if (!moonOrbit.isAnimating) {
+    moonOrbit.destinationAngle = Math.PI * 2;
+    moonOrbit.isAnimating = true;
+    animateMoonToDestination();
+    $('#solarEclipseAlert').fadeOut();
+    $('#lunarEclipseAlert').fadeIn('slow');
+  }
+};
+
+document
+  .getElementById("lunarEclipseBtn")
+  .addEventListener("click", animateLunarEclipse);
 
 //resize listner
 window.addEventListener(
@@ -161,23 +224,41 @@ window.addEventListener(
   false
 );
 
-//animation loop
 const animate = () => {
   requestAnimationFrame(animate);
-  // cloud.rotation.y -= 0.0002;
-  moonPivot.rotation.y -= 0.005;
-  moonPivot.rotation.x = 0.5;
 
-  earthPivot.rotation.y -= 0.005;
-  earthPivot.rotation.x = 0.5;
+  // moonPivot.rotation.y -= 0.005;
+  // moonPivot.rotation.x = 0.5;
 
-  // cameraPivot.rotation.y += 0.001;
-  // starMesh.rotation.y += 0.0002;
-  camera.layers.set(1);
+  // sunMesh.rotation.y -= 0.002;
+  // sunMesh.rotation.x = 0.2;
+
+  controls.target.copy(sunMesh.position);
+  controls.update();
+
   bloomComposer.render();
+
+  camera.layers.set(1);
   renderer.clearDepth();
+
   camera.layers.set(0);
+  renderer.render(scene, camera);
+
+  camera.layers.set(1);
+  renderer.clearDepth();
   renderer.render(scene, camera);
 };
 
 animate();
+
+var closeIcons=document.getElementsByClassName('closeAlert');  
+
+function CloseAlerts()
+{
+  $('#solarEclipseAlert').fadeOut();
+  $('#lunarEclipseAlert').fadeOut();
+};
+
+for (var i = 0; i < closeIcons.length; i++) {
+  closeIcons[i].addEventListener("click", CloseAlerts);
+}

@@ -7,3 +7,50 @@
 body {
   overflow: hidden;
 }
+
+.btnAction{
+  padding: 10px;
+  color: white;
+  background: transparent;
+  border: 1px solid white;
+  border-radius: 10px;
+  font-size: 26px;
+  margin-right: 20px;
+}
+
+#buttonBox{
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: 20px;
+}
+
+.alert{
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  width: 500px;
+  border: 2px solid #318a45;
+  background: #c3e6cb;
+  border-radius: 10px;
+  padding: 10px;
+  font-family: 'Courier New', Courier, monospace;
+
+}
+
+.alert h3{
+  color: #318a45;
+  margin-bottom: 10px;
+  font-size: 30px;
+}
+
+.alert p{
+  font-size: 25px;
+}
+
+.closeAlert{
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
