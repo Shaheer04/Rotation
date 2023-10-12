@@ -53,8 +53,8 @@ We welcome contributions from the open-source community. If you'd like to contri
 # Contact
 If you have any questions or need further information, please feel free to reach out to the project team:
 
-- Shaheer Jamal (sheeryjamal05@gmail.com)
-- Ashhad Ahmed Kamran (sheeryjamal05@gmail.com)
+- Shaheer Jamal (Shaheer-jamal@outlook.com)
+- Ashhad Ahmed Kamran (Shaheer-jamal@outlook.com)
 - Syed Shahriyar Ali (shahriyarali08@gmail.com)
 
 # Acknowledgments
